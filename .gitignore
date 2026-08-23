@@ -1,0 +1,34 @@
+# Local build output and dependency caches
+build/
+.gradle/
+.gradle-user-home/
+run/
+run-data/
+local-libs/
+work-extracted-gtceu-libs/
+site/
+
+# IDE and OS files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.launch
+.DS_Store
+Thumbs.db
+
+# Local diagnostics and instance state
+*.log
+logs/
+config/
+backups/
+
+# Temporary archives and private credentials
+*.tmp
+*.bak
+*.key
+*.pem
+*.p12
+credentials*
+tokens*

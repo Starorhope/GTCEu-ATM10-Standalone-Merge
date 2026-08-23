@@ -1,0 +1,176 @@
+{
+  "status": "PASS",
+  "mergedJar": "<workspace>\\outputs\\gtceu-1.21.1-8.0.1-atm10.5-with-gtna-pccard-recipefix-v6.jar",
+  "namespaces": [
+    {
+      "namespace": "gtna",
+      "addonJar": "<workspace>\\work\\port_nexus\\build\\libs\\gtna-0.4.0.jar",
+      "englishKeyCount": 1431,
+      "chineseKeyCount": 1431,
+      "missingKeys": [],
+      "extraKeys": [],
+      "blankKeys": [],
+      "nonStringEnglishKeys": [],
+      "placeholderMismatches": [],
+      "colorCodeMismatches": [],
+      "newlineMismatches": [],
+      "asciiOnlyChineseValues": [
+        {
+          "key": "gtna.jade.multiple_recipes.item_output",
+          "value": " %sx %s"
+        },
+        {
+          "key": "gtna.machine.directed_tesseract.ui.target",
+          "value": "#%s %s @ %s, %s, %s [%s] [%s]"
+        },
+        {
+          "key": "gtna.machine.industrial_platform_deployment_tools.offset.x",
+          "value": "X：%s"
+        },
+        {
+          "key": "gtna.machine.industrial_platform_deployment_tools.offset.y",
+          "value": "Y：%s"
+        },
+        {
+          "key": "gtna.machine.industrial_platform_deployment_tools.offset.z",
+          "value": "Z：%s"
+        },
+        {
+          "key": "gtna.machine.me_storage.access",
+          "value": "%s：%s"
+        },
+        {
+          "key": "gtna.machine.nexus_flux_matrix.ui.connection",
+          "value": "%s %sA %s %s %s EU/t"
+        },
+        {
+          "key": "gtna.machine.nexus_flux_matrix.ui.locate",
+          "value": " [%s]"
+        },
+        {
+          "key": "gtna.machine.slaughterhouse.ui.drop_entry",
+          "value": "- %sx %s"
+        },
+        {
+          "key": "gtna.terminal.quantum.connection",
+          "value": "%s §f%sA %s %s §7%s EU/t"
+        },
+        {
+          "key": "gtna.terminal.quantum.fill",
+          "value": "%s §f%s%%"
+        },
+        {
+          "key": "gtna.terminal.quantum.position",
+          "value": "  §8%s  %s"
+        }
+      ],
+      "unchangedChineseValues": [
+        {
+          "key": "gtna.jade.multiple_recipes.item_output",
+          "value": " %sx %s"
+        },
+        {
+          "key": "gtna.machine.directed_tesseract.ui.target",
+          "value": "#%s %s @ %s, %s, %s [%s] [%s]"
+        },
+        {
+          "key": "gtna.machine.nexus_flux_matrix.ui.connection",
+          "value": "%s %sA %s %s %s EU/t"
+        },
+        {
+          "key": "gtna.machine.nexus_flux_matrix.ui.locate",
+          "value": " [%s]"
+        },
+        {
+          "key": "gtna.machine.slaughterhouse.ui.drop_entry",
+          "value": "- %sx %s"
+        },
+        {
+          "key": "gtna.terminal.quantum.connection",
+          "value": "%s §f%sA %s %s §7%s EU/t"
+        },
+        {
+          "key": "gtna.terminal.quantum.fill",
+          "value": "%s §f%s%%"
+        },
+        {
+          "key": "gtna.terminal.quantum.position",
+          "value": "  §8%s  %s"
+        }
+      ],
+      "addonLanguageMembers": [
+        "assets/gtna/lang/en_ud.json",
+        "assets/gtna/lang/en_us.json",
+        "assets/gtna/lang/pt_br.json",
+        "assets/gtna/lang/zh_cn.json"
+      ],
+      "addonLanguageDuplicateMembers": [],
+      "mergedLanguageMembers": [
+        "assets/gtna/lang/en_ud.json",
+        "assets/gtna/lang/en_us.json",
+        "assets/gtna/lang/pt_br.json",
+        "assets/gtna/lang/zh_cn.json"
+      ],
+      "mergedLanguageDuplicateMembers": [],
+      "missingMergedLanguageMembers": [],
+      "extraMergedLanguageMembers": [],
+      "changedMergedLanguageMembers": [],
+      "allLanguageMembersByteIdentical": true,
+      "mergedSemanticIdentity": {
+        "en_us": true,
+        "zh_cn": true
+      },
+      "mergedEnglishKeyCount": 1431,
+      "mergedChineseKeyCount": 1431,
+      "expectedEnglish": {
+        "expectedKeyCount": 1431,
+        "missingKeys": [],
+        "extraKeys": [],
+        "valueMismatchKeys": [],
+        "semanticIdentity": true
+      },
+      "errors": []
+    },
+    {
+      "namespace": "pccard",
+      "addonJar": "<workspace>\\work\\port_circuit\\build\\libs\\pccard-1.21.1-1.3.1+neoforge.1.21.1.jar",
+      "englishKeyCount": 16,
+      "chineseKeyCount": 16,
+      "missingKeys": [],
+      "extraKeys": [],
+      "blankKeys": [],
+      "nonStringEnglishKeys": [],
+      "placeholderMismatches": [],
+      "colorCodeMismatches": [],
+      "newlineMismatches": [],
+      "asciiOnlyChineseValues": [],
+      "unchangedChineseValues": [],
+      "addonLanguageMembers": [
+        "assets/pccard/lang/en_us.json",
+        "assets/pccard/lang/ja_jp.json",
+        "assets/pccard/lang/zh_cn.json"
+      ],
+      "addonLanguageDuplicateMembers": [],
+      "mergedLanguageMembers": [
+        "assets/pccard/lang/en_us.json",
+        "assets/pccard/lang/ja_jp.json",
+        "assets/pccard/lang/zh_cn.json"
+      ],
+      "mergedLanguageDuplicateMembers": [],
+      "missingMergedLanguageMembers": [],
+      "extraMergedLanguageMembers": [],
+      "changedMergedLanguageMembers": [],
+      "allLanguageMembersByteIdentical": true,
+      "mergedSemanticIdentity": {
+        "en_us": true,
+        "zh_cn": true
+      },
+      "mergedEnglishKeyCount": 16,
+      "mergedChineseKeyCount": 16,
+      "expectedEnglish": null,
+      "errors": []
+    }
+  ],
+  "errors": []
+}
+

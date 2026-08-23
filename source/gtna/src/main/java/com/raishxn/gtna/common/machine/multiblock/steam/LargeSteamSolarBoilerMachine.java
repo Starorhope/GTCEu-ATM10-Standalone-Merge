@@ -1,0 +1,208 @@
+package com.raishxn.gtna.common.machine.multiblock.steam;
+
+import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
+import com.gregtechceu.gtceu.api.machine.feature.IMuiMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
+import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic;
+import com.gregtechceu.gtceu.api.multiblock.Predicates;
+import com.gregtechceu.gtceu.api.multiblock.pattern.IBlockPattern;
+import com.gregtechceu.gtceu.api.multiblock.pattern.MultiblockPatternBuilder;
+import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.common.data.GTBlocks;
+import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.config.ConfigHolder;
+import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.FluidStack;
+
+import com.raishxn.gtna.common.data.GTNABlocks;
+import com.raishxn.gtna.utils.MUI2MachineDisplay;
+import brachy.modularui.api.widget.IWidget;
+import brachy.modularui.value.sync.PanelSyncManager;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.EXPORT_FLUIDS;
+import static com.gregtechceu.gtceu.api.machine.multiblock.PartAbility.IMPORT_FLUIDS;
+
+public class LargeSteamSolarBoilerMachine extends WorkableMultiblockMachine implements IMuiMachine {
+
+    private static final int MAX_SIDE = 63;
+    private static final int MAX_BACK = 125;
+    private static final int TICK_INTERVAL = 20;
+    private static final int STEAM_PER_CELL = 200;
+
+    private int lDist;
+    private int rDist;
+    private int bDist;
+    private int sunlit;
+    private long lastSteamOutput;
+    private boolean formed;
+
+    public LargeSteamSolarBoilerMachine(BlockEntityCreationInfo holder) {
+        super(holder);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (!isRemote()) {
+            subscribeServerTick(this::updateSolarLogic);
+        }
+    }
+
+    private void updateStructureDimensions() {
+        Level world = getLevel();
+        if (world == null) {
+            return;
+        }
+
+        Direction front = getFrontFacing();
+        Direction back = front.getOpposite();
+        Direction left = front.getCounterClockWise();
+        Direction right = left.getOpposite();
+
+        this.bDist = calculateDistance(world, getBlockPos(), back, MAX_BACK);
+        this.lDist = calculateDistance(world, getBlockPos().relative(back), left, MAX_SIDE);
+        this.rDist = calculateDistance(world, getBlockPos().relative(back), right, MAX_SIDE);
+        this.formed = bDist >= 3 && lDist >= 1 && rDist >= 1;
+    }
+
+    private int calculateDistance(Level world, BlockPos start, Direction dir, int max) {
+        int dist = 0;
+        BlockPos.MutableBlockPos pos = start.mutable();
+        for (int i = 1; i <= max; i++) {
+            pos.move(dir);
+            if (world.getBlockState(pos).is(GTNABlocks.SOLAR_BOILING_CELL.get())) {
+                dist = i;
+            } else {
+                break;
+            }
+        }
+        return dist;
+    }
+
+    @NotNull
+    @Override
+    public IBlockPattern getDefaultStructurePattern() {
+        if (getLevel() != null) {
+            updateStructureDimensions();
+        }
+
+        int safeL = formed ? lDist : 1;
+        int safeR = formed ? rDist : 1;
+        int safeB = formed ? bDist : 3;
+
+        int totalWidth = safeL + safeR + 3;
+        String boundary = "A".repeat(totalWidth);
+        String middle = "A" + "B".repeat(totalWidth - 2) + "A";
+        String controllerRow = "A".repeat(safeL + 1) + "~" + "A".repeat(safeR + 1);
+
+        return MultiblockPatternBuilder.start(RelativeDirection.LEFT, RelativeDirection.UP, RelativeDirection.FRONT)
+                .slice(boundary)
+                .sliceRepeatable(safeB, safeB, middle)
+                .slice(controllerRow)
+                .where('~', Predicates.controller(getDefinition()))
+                .where('A', Predicates.blocks(GTBlocks.STEEL_HULL.get())
+                        .or(Predicates.abilities(IMPORT_FLUIDS).setPreviewCount(1))
+                        .or(Predicates.abilities(EXPORT_FLUIDS).setPreviewCount(1)))
+                .where('B', Predicates.blocks(GTNABlocks.SOLAR_BOILING_CELL.get()))
+                .build();
+    }
+
+    @Override
+    public IBlockPattern getSubstructurePattern(String name) {
+        return DEFAULT_STRUCTURE.equals(name) ? getDefaultStructurePattern() : super.getSubstructurePattern(name);
+    }
+
+    private void updateSolarLogic() {
+        if (!formed || !isWorkingEnabled() || this.recipeLogic.isWorking()) {
+            return;
+        }
+        if (getOffsetTimer() % TICK_INTERVAL != 0) {
+            return;
+        }
+        if (!isDaytime()) {
+            sunlit = 0;
+            lastSteamOutput = 0;
+            return;
+        }
+
+        sunlit = calculateSunlitArea();
+        if (sunlit <= 0) {
+            lastSteamOutput = 0;
+            return;
+        }
+
+        GTRecipe recipe = createSolarRecipe();
+        this.recipeLogic.setupRecipe(recipe);
+    }
+
+    private boolean isDaytime() {
+        return getLevel() != null && getLevel().isDay() && !getLevel().isRaining();
+    }
+
+    private int calculateSunlitArea() {
+        int count = 0;
+        Level level = getLevel();
+        if (level == null) {
+            return 0;
+        }
+        BlockPos pos = getBlockPos();
+        Direction back = getFrontFacing().getOpposite();
+        Direction left = getFrontFacing().getCounterClockWise();
+        Direction right = left.getOpposite();
+        for (int b = 1; b <= bDist; b++) {
+            BlockPos rowPos = pos.relative(back, b);
+            if (level.canSeeSky(rowPos.above())) {
+                count++;
+            }
+            for (int l = 1; l <= lDist; l++) {
+                if (level.canSeeSky(rowPos.relative(left, l).above())) {
+                    count++;
+                }
+            }
+            for (int r = 1; r <= rDist; r++) {
+                if (level.canSeeSky(rowPos.relative(right, r).above())) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private GTRecipe createSolarRecipe() {
+        int steamOut = sunlit * STEAM_PER_CELL;
+        int waterIn = (int) Math.ceil((double) steamOut / ConfigHolder.INSTANCE.machines.largeBoilers.steamPerWater);
+        lastSteamOutput = (long) steamOut * 20L;
+        return GTRecipeBuilder.of(GTCEu.id("large_steam_solar_boiler"), getRecipeType())
+                .inputFluids(new FluidStack(Fluids.WATER, waterIn))
+                .outputFluids(GTMaterials.Steam.getFluid(steamOut))
+                .duration(TICK_INTERVAL)
+                .build();
+    }
+
+    @Override
+    public List<IWidget> getWidgetsForDisplay(PanelSyncManager syncManager) {
+        List<IWidget> widgets = super.getWidgetsForDisplay(syncManager);
+        widgets.add(MUI2MachineDisplay.syncedLines(syncManager, "gtna_solar", this::addSolarDisplayText));
+        return widgets;
+    }
+
+    private void addSolarDisplayText(List<Component> textList) {
+        if (isFormed()) {
+            textList.add(Component.translatable("gtna.machine.large_steam_solar_boiler.size", (lDist + rDist + 3),
+                    (bDist + 2)));
+            textList.add(Component.translatable("gtna.machine.large_steam_solar_boiler.sunlit", sunlit));
+            textList.add(Component.translatable("gtna.machine.large_steam_solar_boiler.production", lastSteamOutput));
+        }
+    }
+}

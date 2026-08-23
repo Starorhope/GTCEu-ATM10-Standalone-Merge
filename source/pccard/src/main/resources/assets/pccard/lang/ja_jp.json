@@ -1,0 +1,18 @@
+{
+  "item.pccard.card_programmed_circuit": "プログラム回路カード",
+  "gui.pccard.pattern_buffer.blocking_mode.off": "ブロッキング：オフ",
+  "gui.pccard.pattern_buffer.blocking_mode.off.short": "切",
+  "gui.pccard.pattern_buffer.blocking_mode.off.description": "バッファ内の入力に関係なくパターンの搬入を許可します。",
+  "gui.pccard.pattern_buffer.card_slot": "プログラム回路カードスロット",
+  "gui.pccard.pattern_buffer.blocking_mode.normal": "ブロッキング：通常",
+  "gui.pccard.pattern_buffer.blocking_mode.normal.short": "通",
+  "gui.pccard.pattern_buffer.blocking_mode.normal.description": "同じ入力がすでにバッファ内にある場合、パターンをブロックします。",
+  "gui.pccard.pattern_buffer.blocking_mode.smart": "ブロッキング：スマート",
+  "gui.pccard.pattern_buffer.blocking_mode.smart.short": "賢",
+  "gui.pccard.pattern_buffer.blocking_mode.smart.description": "バッファ内で異なる材料グループが混在しないようにします。",
+  "gui.pccard.pattern_buffer.blocking_mode.full": "ブロッキング：完全",
+  "gui.pccard.pattern_buffer.blocking_mode.full.short": "全",
+  "gui.pccard.pattern_buffer.blocking_mode.full.description": "バッファに材料がある間、すべての新しいパターンをブロックします。",
+  "resourcepack.pccard.modern": "プログラム回路カード：1.21スタイル",
+  "resourcepack.pccard.modern.description": "xiaoleng5261によるオプションの1.21スタイル・プログラム回路カードテクスチャ"
+}

@@ -1,0 +1,8 @@
+* text=auto
+*.jar binary
+*.png binary
+*.mb binary
+*.mbs binary
+*.obj binary
+*.mtl binary
+*.map binary

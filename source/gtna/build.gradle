@@ -1,0 +1,177 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+version = mod_version
+group = maven_group
+base { archivesName = archives_base_name }
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+sourceSets {
+    main.resources {
+        srcDir 'src/generated/resources'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+}
+
+neoForge {
+    version = project.neoforge_version
+
+    parchment {
+        minecraftVersion = project.minecraft_version
+        mappingsVersion = project.mapping_version
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+
+    runs {
+        client {
+            client()
+            sourceSet = sourceSets.main
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        }
+        server {
+            server()
+            sourceSet = sourceSets.main
+            programArguments.addAll('--nogui')
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        }
+        data {
+            data()
+            sourceSet = sourceSets.main
+            programArguments.addAll(
+                    '--mod', project.mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources/').absolutePath,
+                    '--existing', file('src/main/resources/').absolutePath)
+        }
+    }
+}
+
+def atm10ModsDir = file(findProperty('atm10_mods_dir') ?: 'D:/PCL2/.minecraft/versions/All the Mods 10 - 8.0 Migrated/mods')
+def ldlibCompatJar = file(findProperty('ldlib_compat_jar') ?: '../builddeps/ldlib-neoforge-1.21.1-1.0.41.jar')
+def requiredLocalMods = [
+        'gtceu-1.21.1-8.0.1-atm10.5.jar',
+        'appliedenergistics2-19.2.17.jar',
+        'ExtendedAE-1.21-2.2.35-neoforge.jar',
+        'AdvancedAE-1.6.12-1.21.1.jar',
+        'extendedae_plus-1.5.5.jar',
+        'guideme-21.1.17.jar',
+        'ldlib2-neoforge-1.21.1-2.2.36-all.jar',
+        'Glodium-1.21-2.2-neoforge.jar',
+        'architectury-13.0.11-neoforge.jar',
+        'curios-neoforge-9.5.1+1.21.1.jar',
+        'Jade-1.21.1-NeoForge-15.10.6.jar',
+        'jei-1.21.1-neoforge-19.44.0.403.jar',
+        'kubejs-neoforge-2101.7.2-build.368.jar',
+        'rhino-2101.2.8-build.91.jar',
+        'create-1.21.1-6.0.10.jar'
+]
+
+def missingLocalMods = requiredLocalMods.findAll { !new File(atm10ModsDir, it).isFile() }
+if (!missingLocalMods.isEmpty()) {
+    throw new GradleException("ATM10 compile dependencies are missing from ${atm10ModsDir}: ${missingLocalMods.join(', ')}")
+}
+if (!ldlibCompatJar.isFile()) {
+    throw new GradleException("LDLib 1.x compatibility jar is missing: ${ldlibCompatJar}")
+}
+
+dependencies {
+    compileOnly('org.jetbrains:annotations:26.0.1')
+
+    compileOnly('org.projectlombok:lombok:1.18.38')
+    annotationProcessor('org.projectlombok:lombok:1.18.38')
+    annotationProcessor('org.spongepowered:mixin:0.8.7:processor')
+
+    requiredLocalMods.each { jarName ->
+        compileOnly(files(new File(atm10ModsDir, jarName)))
+    }
+    compileOnly(files(ldlibCompatJar))
+    runtimeOnly(files(ldlibCompatJar))
+
+    // GTCEu embeds these libraries with JarJar. javac cannot see nested jars in
+    // a normal file dependency, so the exact embedded artifacts are extracted
+    // once into local-libs/ from the target instance's GTCEu jar.
+    compileOnly(fileTree('local-libs') { include '*.jar' })
+}
+
+jar {
+    manifest.attributes([
+            'MixinConfigs': 'gtna.mixins.json'
+    ])
+    from('LICENSE.MD') {
+        into 'META-INF/licenses'
+        rename { 'gtna-LICENSE.md' }
+    }
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+    def properties = [
+            mod_license      : mod_license,
+            mod_id           : mod_id,
+            version          : version,
+            mod_name         : mod_name,
+            mod_url          : mod_url,
+            mod_author       : mod_author,
+            loader_version   : loader_version,
+            neoforge_version : neoforge_version,
+            minecraft_version: minecraft_version,
+            gtceu_version    : gtceu_version
+    ]
+    inputs.properties(properties)
+
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand(properties + [project: project])
+    }
+
+    doLast {
+        def manualEnUs = file('src/main/resources/assets/gtna/lang/en_us.json')
+        def generatedEnUs = file('src/generated/resources/assets/gtna/lang/en_us.json')
+        def mergedEnUs = file("${destinationDir}/assets/gtna/lang/en_us.json")
+        def slurper = new groovy.json.JsonSlurper()
+        Map<String, Object> merged = [:]
+
+        if (manualEnUs.exists()) {
+            merged.putAll(slurper.parse(manualEnUs) as Map<String, Object>)
+        }
+        if (generatedEnUs.exists()) {
+            merged.putAll(slurper.parse(generatedEnUs) as Map<String, Object>)
+        }
+
+        if (!merged.isEmpty()) {
+            mergedEnUs.parentFile.mkdirs()
+            mergedEnUs.text = groovy.json.JsonOutput.prettyPrint(
+                    groovy.json.JsonOutput.toJson(new TreeMap<>(merged))
+            ) + System.lineSeparator()
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release.set(21)
+    options.compilerArgs.addAll(['-Aquiet=true', '-Xmaxerrs', '1000'])
+}
+
+tasks.named('sourcesJar', Jar).configure {
+    // src/main and datagen both contain en_us.json; the runtime resource task
+    // merges them explicitly above, while a ZIP cannot contain the same path twice.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

@@ -1,0 +1,77 @@
+modLoader = "javafml"
+loaderVersion = "[${loader_version},)"
+license = "${mod_license}"
+issueTrackerURL = "${mod_url}/issues"
+
+[[mods]]
+    modId = "${mod_id}"
+    version = "${version}"
+    displayName = "${mod_name}"
+    displayURL = "${mod_url}"
+    authors = "${mod_author}"
+    description = '''
+GregTech：枢纽扩展——为 ATM10 的 Minecraft 1.21.1 NeoForge 技术栈迁移，贯通蒸汽、钢铁与枢纽网络。
+GregTech: Nexus Addon — a steam-and-steel industrial expansion ported to the ATM10 Minecraft 1.21.1 NeoForge stack.
+'''
+
+[[mixins]]
+    config = "gtna.mixins.json"
+
+[[accessTransformers]]
+    file = "META-INF/accesstransformer.cfg"
+
+[[dependencies.${mod_id}]]
+    modId = "neoforge"
+    type = "required"
+    versionRange = "[${neoforge_version}]"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "minecraft"
+    type = "required"
+    versionRange = "[${minecraft_version}]"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "gtceu"
+    type = "required"
+    versionRange = "[${gtceu_version}]"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "ae2"
+    type = "required"
+    versionRange = "[19.2.17]"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "guideme"
+    type = "required"
+    versionRange = "[21.1.17]"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "ldlib"
+    type = "required"
+    versionRange = "[1.0.41]"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "extendedae"
+    type = "optional"
+    versionRange = "[1.21-2.2.35-neoforge]"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "advanced_ae"
+    type = "optional"
+    versionRange = "[1.6.12-1.21.1]"
+    ordering = "AFTER"
+    side = "BOTH"

@@ -1,0 +1,147 @@
+{
+  "status": "passed",
+  "artifacts": {
+    "gtna": {
+      "path": "<workspace>\\work\\port_nexus\\build\\libs\\gtna-0.4.0.jar",
+      "length": 10080137,
+      "sha256": "34B0931AFB1559DB63A35314CC86E39219C7F39A71F961C276FFEBE48694FA2E",
+      "entry_count": 3443,
+      "zip_crc_test": "passed",
+      "exact_duplicate_paths": 0,
+      "case_insensitive_duplicate_paths": 0,
+      "signature_entries": [],
+      "json_files_parsed": 2320,
+      "mods": {
+        "gtna": "0.4.0"
+      },
+      "manifest_mixin_configs": [
+        "gtna.mixins.json"
+      ],
+      "configured_mixin_classes_checked": 13,
+      "license_entries": [
+        "META-INF/licenses/gtna-LICENSE.md",
+        "assets/gtna/multiblock/element_copying.mb"
+      ]
+    },
+    "pccard": {
+      "path": "<workspace>\\work\\port_circuit\\build\\libs\\pccard-1.21.1-1.3.1+neoforge.1.21.1.jar",
+      "length": 438042,
+      "sha256": "AB200C87A165E0CE9C036A35F19C0EBE63676C5A91CBAE0DD1FFED2D9C5F98B3",
+      "entry_count": 72,
+      "zip_crc_test": "passed",
+      "exact_duplicate_paths": 0,
+      "case_insensitive_duplicate_paths": 0,
+      "signature_entries": [],
+      "json_files_parsed": 8,
+      "mods": {
+        "pccard": "1.3.1+neoforge.1.21.1"
+      },
+      "manifest_mixin_configs": [
+        "pccard.mixins.json"
+      ],
+      "configured_mixin_classes_checked": 16,
+      "license_entries": [
+        "META-INF/licenses/pccard-CREDITS.txt",
+        "META-INF/licenses/pccard-LICENSE.txt"
+      ]
+    },
+    "merged": {
+      "path": "<workspace>\\outputs\\gtceu-1.21.1-8.0.1-atm10.5-with-gtna-pccard-recipefix-v6.jar",
+      "length": 30035132,
+      "sha256": "BF2888E67BED0E447482E8EEE8E8AAC2363AE795C0976E8997CAF05005BCF136",
+      "entry_count": 17355,
+      "zip_crc_test": "passed",
+      "exact_duplicate_paths": 0,
+      "case_insensitive_duplicate_paths": 0,
+      "signature_entries": [],
+      "json_files_parsed": 9199,
+      "mods": {
+        "gtceu": "8.0.1-atm10.5"
+      },
+      "manifest_mixin_configs": [
+        "gtceu.mixins.json",
+        "gtna.mixins.json",
+        "pccard.mixins.json",
+        "gtceu-embedded-addons.mixins.json"
+      ],
+      "configured_mixin_classes_checked": 100,
+      "license_entries": [
+        "META-INF/LICENSE_GTCEU_LGPL-3.0.txt",
+        "META-INF/THIRD_PARTY_NOTICES.md",
+        "META-INF/licenses/gtna-LICENSE.md",
+        "META-INF/licenses/pccard-CREDITS.txt",
+        "META-INF/licenses/pccard-LICENSE.txt",
+        "META-INF/third_party_licenses/CodeChickenLib-LGPL-2.1-or-later.txt",
+        "META-INF/third_party_licenses/Configuration-MIT.txt",
+        "META-INF/third_party_licenses/ConnectedTexturesMod-GPL-2.0-or-later.txt",
+        "META-INF/third_party_licenses/Dragonborn-Lib-LGPL-2.1.txt",
+        "META-INF/third_party_licenses/EvalEx-Apache-2.0.txt",
+        "META-INF/third_party_licenses/Font-OFL-1.1.txt",
+        "META-INF/third_party_licenses/GPL-3.0-only.txt",
+        "META-INF/third_party_licenses/LGPL-3.0-only.txt",
+        "META-INF/third_party_licenses/Registrate-MPL-2.0.txt",
+        "assets/gtceu/textures/font/LICENSE.txt",
+        "assets/gtna/multiblock/element_copying.mb"
+      ],
+      "verified_dependencies": {
+        "neoforge": [
+          "required",
+          "[21.1.248]",
+          "BOTH"
+        ],
+        "minecraft": [
+          "required",
+          "[1.21.1]",
+          "BOTH"
+        ],
+        "ae2": [
+          "required",
+          "[19.2.17]",
+          "BOTH"
+        ],
+        "guideme": [
+          "required",
+          "[21.1.17]",
+          "BOTH"
+        ],
+        "ldlib": [
+          "required",
+          "[1.0.41]",
+          "BOTH"
+        ],
+        "extendedae": [
+          "optional",
+          "[1.21-2.2.35-neoforge]",
+          "BOTH"
+        ],
+        "advanced_ae": [
+          "required",
+          "[1.6.12-1.21.1]",
+          "BOTH"
+        ],
+        "ae2jeiintegration": [
+          "required",
+          "[1.2.1]",
+          "CLIENT"
+        ]
+      },
+      "gtceu_dependency_count": 21,
+      "embedded_feature_modules": [
+        "gtna",
+        "pccard"
+      ],
+      "bootstrap_bridge": "dev.codex.atm10merge.mixin.GTCEuMergedAddonsMixin",
+      "gt_addon_entry_point": "com.raishxn.gtna.GTNAGTAddonMerged",
+      "nested_ldlib": {
+        "entry": "META-INF/jarjar/ldlib-neoforge-1.21.1-1.0.41.jar",
+        "length": 2625884,
+        "sha256": "2ACD41D8F5A26E3E7B7D355E407617A8E9F1E5410CE85D3E031ACC2FE4442DE9",
+        "mods": {
+          "ldlib": "1.0.41"
+        },
+        "zip_crc_test": "passed"
+      }
+    }
+  }
+}
+

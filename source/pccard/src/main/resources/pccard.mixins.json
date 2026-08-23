@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "yuuki1293.pccard.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AdvPatternProviderLogicHostMixin",
+    "AdvPatternProviderLogicMixin",
+    "AdvPatternProviderLogicMixinHP",
+    "AdvPatternProviderMenuMixin",
+    "AdvProcessingPatternMixin",
+    "AEProcessingPatternMixin",
+    "PatternDetailsHelperMixin",
+    "PatternProviderLogicHostMixin",
+    "PatternProviderLogicMixin",
+    "PatternProviderLogicMixinHP",
+    "PatternProviderMenuMixin",
+    "gtceu.MixinMEPatternBufferPartMachine"
+  ],
+  "client": [
+    "AdvPatternProviderScreenMixin",
+    "GenericEntryStackHelperJeiMixin",
+    "PatternProviderScreenMixin",
+    "SmallAdvPatternProviderScreenMixin"
+  ]
+}

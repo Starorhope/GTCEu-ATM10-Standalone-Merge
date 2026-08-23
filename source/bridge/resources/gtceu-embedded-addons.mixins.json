@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.codex.atm10merge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "GTCEuMergedAddonsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "item.pccard.card_programmed_circuit": "Programmed Circuit Card",
+  "gui.pccard.pattern_buffer.blocking_mode.off": "Blocking: Off",
+  "gui.pccard.pattern_buffer.blocking_mode.off.short": "O",
+  "gui.pccard.pattern_buffer.blocking_mode.off.description": "Allow patterns to be pushed regardless of buffered inputs.",
+  "gui.pccard.pattern_buffer.card_slot": "Programmed Circuit Card slot",
+  "gui.pccard.pattern_buffer.blocking_mode.normal": "Blocking: Normal",
+  "gui.pccard.pattern_buffer.blocking_mode.normal.short": "N",
+  "gui.pccard.pattern_buffer.blocking_mode.normal.description": "Block a pattern when one of its inputs is already buffered.",
+  "gui.pccard.pattern_buffer.blocking_mode.smart": "Blocking: Smart",
+  "gui.pccard.pattern_buffer.blocking_mode.smart.short": "S",
+  "gui.pccard.pattern_buffer.blocking_mode.smart.description": "Keep buffered ingredient groups from being mixed.",
+  "gui.pccard.pattern_buffer.blocking_mode.full": "Blocking: Full",
+  "gui.pccard.pattern_buffer.blocking_mode.full.short": "F",
+  "gui.pccard.pattern_buffer.blocking_mode.full.description": "Block every new pattern while the buffer contains payload.",
+  "resourcepack.pccard.modern": "Programmed Circuit Card: 1.21 Style",
+  "resourcepack.pccard.modern.description": "Optional 1.21-style Programmed Circuit Card texture by xiaoleng5261"
+}

@@ -1,0 +1,10 @@
+pluginManagement {
+    // when using additional gradle plugins like shadow,
+    // add their repositories to this list!
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.neoforged.net/releases' }
+        maven { url = 'https://maven.parchmentmc.org' }
+    }
+}
+rootProject.name = 'gregtech-nexus-addon'

@@ -1,0 +1,41 @@
+{
+  "artifact": "gtceu-1.21.1-8.0.1-atm10.5-with-gtna-pccard-recipefix-v6.jar",
+  "sha256": "BF2888E67BED0E447482E8EEE8E8AAC2363AE795C0976E8997CAF05005BCF136",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.248",
+  "gtceu": "8.0.1-atm10.5",
+  "logicalMod": "gtceu",
+  "embeddedFeatures": [
+    "gtna",
+    "pccard"
+  ],
+  "standaloneAddonJarsInstalled": false,
+  "recipeAudit": "PASS 561/561",
+  "circuitAudit": "PASS 5/5",
+  "jeiCleanup": "PASS processed 115; removed 114; absent 1",
+  "emptyMaterialAudit": {
+    "occurrences": 440,
+    "distinctPairs": 224,
+    "validPairs": 224,
+    "invalidPairs": 0,
+    "unknownPairs": 0
+  },
+  "runtimeSmoke": {
+    "ready": true,
+    "fatalLineCount": 0,
+    "outOfMemory": false,
+    "waitedForUserClose": true,
+    "quickPlayWorld": "测试专用"
+  },
+  "sourceDirectories": [
+    "source/gtna",
+    "source/pccard",
+    "source/bridge"
+  ],
+  "buildTools": [
+    "tools/merge_into_gt.py",
+    "tools/audit_release.py",
+    "tools/audit_localization.py"
+  ]
+}
+

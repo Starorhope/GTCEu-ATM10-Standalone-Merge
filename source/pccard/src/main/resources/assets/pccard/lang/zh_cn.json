@@ -1,0 +1,18 @@
+{
+  "item.pccard.card_programmed_circuit": "编程电路卡",
+  "gui.pccard.pattern_buffer.blocking_mode.off": "阻挡模式：关闭",
+  "gui.pccard.pattern_buffer.blocking_mode.off.short": "关",
+  "gui.pccard.pattern_buffer.blocking_mode.off.description": "无论缓冲区中有何输入，均允许推送样板。",
+  "gui.pccard.pattern_buffer.card_slot": "编程电路卡槽",
+  "gui.pccard.pattern_buffer.blocking_mode.normal": "阻挡模式：标准",
+  "gui.pccard.pattern_buffer.blocking_mode.normal.short": "常",
+  "gui.pccard.pattern_buffer.blocking_mode.normal.description": "若样板的任一输入已在缓冲区中，则阻止推送该样板。",
+  "gui.pccard.pattern_buffer.blocking_mode.smart": "阻挡模式：智能",
+  "gui.pccard.pattern_buffer.blocking_mode.smart.short": "智",
+  "gui.pccard.pattern_buffer.blocking_mode.smart.description": "防止缓冲区中的不同原料组相互混合。",
+  "gui.pccard.pattern_buffer.blocking_mode.full": "阻挡模式：完全",
+  "gui.pccard.pattern_buffer.blocking_mode.full.short": "全",
+  "gui.pccard.pattern_buffer.blocking_mode.full.description": "缓冲区非空时，阻止推送任何新样板。",
+  "resourcepack.pccard.modern": "编程电路卡：1.21 风格",
+  "resourcepack.pccard.modern.description": "xiaoleng5261 制作的可选 1.21 风格编程电路卡纹理"
+}

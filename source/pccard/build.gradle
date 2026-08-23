@@ -1,0 +1,117 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+version = "${minecraft_version}-${mod_version}"
+group = mod_group_id
+base { archivesName = mod_id }
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+}
+
+neoForge {
+    version = project.neo_version
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+    mods {
+        "${mod_id}" { sourceSet(sourceSets.main) }
+    }
+    runs {
+        client { client(); sourceSet = sourceSets.main }
+        server { server(); sourceSet = sourceSets.main; programArguments.addAll('--nogui') }
+    }
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+def atm10ModsDir = file(findProperty('atm10_mods_dir') ?:
+        'D:/PCL2/.minecraft/versions/All the Mods 10 - 8.0 Migrated/mods')
+def requiredLocalMods = [
+        'gtceu-1.21.1-8.0.1-atm10.5.jar',
+        'appliedenergistics2-19.2.17.jar',
+        'AdvancedAE-1.6.12-1.21.1.jar',
+        'ExtendedAE-1.21-2.2.35-neoforge.jar',
+        'guideme-21.1.17.jar',
+        'geckolib-neoforge-1.21.1-4.9.2.jar',
+        'Glodium-1.21-2.2-neoforge.jar',
+        'jei-1.21.1-neoforge-19.44.0.403.jar',
+        'ae2jeiintegration-1.2.1.jar'
+]
+def missingLocalMods = requiredLocalMods.findAll { !new File(atm10ModsDir, it).isFile() }
+if (!missingLocalMods.isEmpty()) {
+    throw new GradleException("ATM10 compile dependencies are missing: ${missingLocalMods.join(', ')}")
+}
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:26.0.1'
+    annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
+    requiredLocalMods.each { jarName ->
+        compileOnly(files(new File(atm10ModsDir, jarName)))
+    }
+    // AdvancedAE embeds its public addon API with JarJar. Expose that nested jar to javac as well.
+    compileOnly(zipTree(new File(atm10ModsDir, 'AdvancedAE-1.6.12-1.21.1.jar')).matching {
+        include 'META-INF/jarjar/ae2addonlib-*.jar'
+    })
+    compileOnly(fileTree('../port_nexus/local-libs') { include '*.jar' })
+}
+
+def generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    def properties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+            ae2_version_range      : ae2_version_range,
+            adae_version_range     : adae_version_range,
+            gtm_version_range      : gtm_version_range,
+            guideme_version_range  : guideme_version_range,
+            ae2jei_version_range   : ae2jei_version_range
+    ]
+    inputs.properties(properties)
+    expand(properties)
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir(generateModMetadata)
+neoForge.ideSyncTask(generateModMetadata)
+
+tasks.named('processResources', ProcessResources).configure {
+    from('guidebook') { into 'assets/pccard/ae2guide' }
+}
+
+jar {
+    manifest.attributes(['MixinConfigs': 'pccard.mixins.json'])
+    from('LICENSE.txt') {
+        into 'META-INF/licenses'
+        rename { 'pccard-LICENSE.txt' }
+    }
+    from('CREDITS.txt') {
+        into 'META-INF/licenses'
+        rename { 'pccard-CREDITS.txt' }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release.set(21)
+    options.compilerArgs.addAll(['-Aquiet=true', '-Xmaxerrs', '1000'])
+}

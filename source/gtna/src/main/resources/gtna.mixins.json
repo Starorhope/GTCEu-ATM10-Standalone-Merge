@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "package": "com.raishxn.gtna.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "mixins": [
+    "ae2.CraftingCPUClusterMixin",
+    "ae2.CraftingServiceMixin",
+    "ae2.ElapsedTimeTrackerMixin",
+    "ae2.PatternProviderLogicMixin",
+    "ae2.TooltipsMixin",
+    "gtceu.GTNAPlateDoubleMixin",
+    "gtceu.PredicatesMixin",
+    "gtceu.GTRecipeLogicMixin",
+    "gtceu.RecipeHelperMixin"
+  ],
+  "client": [
+    "ae2.CPUSelectionListMixin",
+    "gtceu.GTJeiSlotRegistrationMixin",
+    "gtceu.ItemRecipeCapabilityMixin",
+    "gtceu.SizedModularUIRecipeCategoryMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
