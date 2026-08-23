@@ -1,10 +1,52 @@
-# License Notice
+# License and Copyright Notice
 
-This repository is an unofficial ATM10 integration and merge distribution. It contains modified source trees and a binary assembled from multiple open-source projects.
+## Project status
 
-- GTNA source and license: `source/gtna/LICENSE.MD` (LGPL-3.0-or-later).
-- Programmed Circuit Card source and license: `source/pccard/LICENSE.txt` (MIT), with additional attribution in `source/pccard/CREDITS.txt`.
-- The merged binary also retains the upstream GTCEu and third-party notices in its `META-INF/` directory. The base GTCEu project and its notices are not relicensed by this repository.
-- The bridge code under `source/bridge` is provided as part of this integration under the same terms as the surrounding merge work; it does not replace or remove any upstream license.
+This repository distributes an **unofficial, community-maintained port and integration build** of GregTech Modern (GTM, also referred to as GregTech CEu: Modern or GTCEu Modern) for the All the Mods 10 8.0 Migrated environment, Minecraft 1.21.1, and NeoForge 21.1.248. The word “port” describes the version adaptation and packaging work in this repository; it does not claim that the upstream project authorized, reviewed, or endorsed this build.
 
-Redistribution of the binary or source must preserve the upstream license texts and attribution notices. This project is not endorsed by GregTechCEu, All The Mods, Raishxn, or yuuki1293.
+This project is not the official GTM/GTCEu or GregTechCEu project, is not an official All the Mods release, and is not endorsed, sponsored, or supported by:
+
+- the GregTechCEu / GTM upstream maintainers;
+- the All The Mods team;
+- Raishxn, the GTNA author; or
+- yuuki1293, the Programmed Circuit Card author.
+
+The names and marks GregTech, GTCEu, GTM, All the Mods, Minecraft, NeoForge, and the names of other dependencies remain with their respective owners. They are used here only to identify compatibility, provenance, and required software. No trademark license or ownership is claimed, and nothing in this repository should be presented as an official release.
+
+## Component licensing
+
+The merged JAR is a packaging of components with separate copyright and license terms. Combining files into the `gtceu` container does **not** relicense, waive, or transfer any upstream rights. The following list is a guide, not a replacement for the license and notice files shipped with each component:
+
+| Component | Copyright / provenance | License and notice |
+| --- | --- | --- |
+| GTM / GTCEu base artifact | GregTechCEu upstream and contributors; the ATM10-compatible base is identified by the hash in `release/merge-report-recipefix-v6.json` | The base artifact's metadata declares `LGPL-3.0-only AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MPL-2.0 AND MIT AND Apache-2.0 AND OFL-1.1` across its code and bundled materials. Preserve the notices in the JAR's `META-INF/`. |
+| GregTech Nexus Addon (GTNA) | Upstream project by Raishxn and its contributors | GNU LGPL v3.0 as distributed in [`source/gtna/LICENSE.MD`](source/gtna/LICENSE.MD). Individual files that carry their own SPDX or copyright headers retain those terms as well. |
+| Programmed Circuit Card | Copyright (c) 2024 yuuki1293 and contributors | MIT License in [`source/pccard/LICENSE.txt`](source/pccard/LICENSE.txt); retain [`source/pccard/CREDITS.txt`](source/pccard/CREDITS.txt). |
+| Embedded-addons bridge | Contributors to this repository | GNU LGPL-3.0-or-later; see [`source/bridge/LICENSE.md`](source/bridge/LICENSE.md). This license covers only the bridge files authored for this repository, not GTCEu, GTNA, PCCard, or other embedded code. |
+| LDLib and other bundled or runtime dependencies | Their respective copyright holders | Follow every license and attribution notice in the final JAR's `META-INF/`, including `THIRD_PARTY_NOTICES.md` and nested-library notices. |
+
+The GTNA and PCCard source trees are included to make the corresponding modified portions auditable. The complete GTCEu source tree and local dependency artifacts are not copied into this repository; obtain them from their upstream projects under the applicable licenses when reproducing a build.
+
+## Redistribution requirements
+
+When redistributing this source or binary:
+
+1. Keep the upstream license texts, copyright statements, credits, and `META-INF/` notices intact.
+2. Identify your changes and do not imply that they were authored, tested, or approved by an upstream project or by All the Mods.
+3. Observe the applicable requirements for modified LGPL/GPL/MPL-covered code, including source and relinking obligations where they apply. This repository provides the included GTNA and bridge source trees, but does not make a separate legal determination for a downstream distribution.
+4. Do not remove or alter trademark notices in a way that suggests affiliation, sponsorship, or endorsement.
+
+The merge changes the distribution layout (GTNA and PCCard are embedded under one logical `gtceu` mod container) and includes compatibility, recipe, and localization changes. It does not change the copyright owner or license of the material being embedded.
+
+## Disclaimer
+
+The software and documentation are provided “as is”, without warranty to the extent permitted by the applicable licenses. Compatibility is tested only against the versions listed in the README and may change with other modpack or dependency versions. This file records provenance and licensing information for practical redistribution; it is not legal advice. If a notice appears incomplete or a rights holder requests a correction, contact the repository maintainer and consult the relevant upstream project.
+
+## Upstream links
+
+- GTM / GTCEu Modern: <https://github.com/GregTechCEu/GregTech-Modern>
+- GregTech Nexus Addon: <https://github.com/Raishxn/GregTech-Nexus-Addon>
+- Programmed Circuit Card: <https://github.com/yuuki1293/ProgrammedCircuitCard>
+- All the Mods 10: <https://www.curseforge.com/minecraft/modpacks/all-the-mods-10>
+- GNU LGPL v3.0 text: <https://www.gnu.org/licenses/lgpl-3.0.html>
+- MIT License text: <https://opensource.org/license/mit>
