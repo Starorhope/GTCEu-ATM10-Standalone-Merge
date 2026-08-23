@@ -1,8 +1,8 @@
 # GTCEu ATM10 Standalone Merge
 
-这是 GregTech Modern（GTM，项目名称也常写作 **GregTech CEu: Modern / GTCEu Modern**）面向 **All the Mods 10 8.0 Migrated**、Minecraft 1.21.1 和 NeoForge 21.1.248 的**非官方移植与维护构建**。这里的“移植”是指将附属模组适配到目标版本并整合进一个运行时容器；本仓库不是 GTM/GTCEu 上游的官方发行版，也不代表任何上游团队。
+这是 GregTech Modern（GTM，项目名称也常写作 **GregTech CEu: Modern / GTCEu Modern**）面向 **All the Mods 10 8.0 Migrated**、Minecraft 1.21.1 和 NeoForge 21.1.1 的**非官方移植与维护构建**。
 
-本发布包把 GTNA（GregTech: Nexus Addon）和 Programmed Circuit Card 的代码、资源、配方与兼容层嵌入 GTCEu 容器中。运行时只需要安装这一个 GTCEu JAR，不需要另外安装这两个附属模组的 JAR。打包只改变分发形式，不改变任何上游代码、资源或第三方库原有的版权归属和许可证。
+本发布包把 GTNA（GregTech: Nexus Addon）和 Programmed Circuit Card 的代码、资源、配方与兼容层嵌入 GTCEu 容器中。
 
 ## 下载
 
