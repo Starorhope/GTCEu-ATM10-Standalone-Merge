@@ -21,7 +21,7 @@ Thumbs.db
 # Local diagnostics and instance state
 *.log
 logs/
-config/
+/config/
 backups/
 
 # Temporary archives and private credentials
