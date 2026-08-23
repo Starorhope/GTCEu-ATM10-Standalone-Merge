@@ -23,7 +23,7 @@ GregTech: Nexus Addon — a steam-and-steel industrial expansion ported to the A
 [[dependencies.${mod_id}]]
     modId = "neoforge"
     type = "required"
-    versionRange = "[${neoforge_version}]"
+    versionRange = "${neoforge_version_range}"
     ordering = "NONE"
     side = "BOTH"
 

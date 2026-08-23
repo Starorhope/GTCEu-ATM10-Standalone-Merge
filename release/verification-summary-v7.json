@@ -1,0 +1,25 @@
+{
+  "artifact": "gtceu-1.21.1-8.0.1-atm10.5-with-gtna-pccard-recipefix-v7.jar",
+  "sha256": "92E80F14D3521E775E6688A276C33202047CF96D816C5F77862E525EE295BE66",
+  "minecraft": "1.21.1",
+  "neoforgeBuildTarget": "21.1.248",
+  "neoforgeRuntimeRange": "[21.1.240,)",
+  "gtceu": "8.0.1-atm10.5",
+  "logicalMod": "gtceu",
+  "embeddedFeatures": ["gtna", "pccard"],
+  "standaloneAddonJarsInstalled": false,
+  "releaseAudit": "PASS",
+  "zipCrc": "PASS",
+  "duplicatePaths": 0,
+  "configuredMixinClassesChecked": 100,
+  "reproducibleCleanRootBuilds": 2,
+  "runtimeSmoke": {
+    "artifact": "v6 (same code/resources; metadata-only delta in v7)",
+    "ready": true,
+    "fatalLineCount": 0,
+    "outOfMemory": false,
+    "waitedForUserClose": true
+  },
+  "sourceDirectories": ["src/main", "source/gtna", "source/pccard"],
+  "buildSystem": "NeoForge ModDevGradle root template plus merge/audit tasks"
+}

@@ -64,8 +64,14 @@ neoForge {
     }
 }
 
-def atm10ModsDir = file(findProperty('atm10_mods_dir') ?: 'D:/PCL2/.minecraft/versions/All the Mods 10 - 8.0 Migrated/mods')
-def ldlibCompatJar = file(findProperty('ldlib_compat_jar') ?: '../builddeps/ldlib-neoforge-1.21.1-1.0.41.jar')
+def atm10ModsPath = providers.gradleProperty('atm10_mods_dir')
+        .orElse(providers.environmentVariable('ATM10_MODS_DIR'))
+        .orElse('local-libs/atm10-mods').get()
+def ldlibCompatPath = providers.gradleProperty('ldlib_compat_jar')
+        .orElse(providers.environmentVariable('LDLIB_COMPAT_JAR'))
+        .orElse('local-libs/ldlib-neoforge-1.21.1-1.0.41.jar').get()
+def atm10ModsDir = file(atm10ModsPath)
+def ldlibCompatJar = file(ldlibCompatPath)
 def requiredLocalMods = [
         'gtceu-1.21.1-8.0.1-atm10.5.jar',
         'appliedenergistics2-19.2.17.jar',
@@ -83,13 +89,16 @@ def requiredLocalMods = [
         'rhino-2101.2.8-build.91.jar',
         'create-1.21.1-6.0.10.jar'
 ]
+def requiredLocalModFiles = requiredLocalMods.collect { new File(atm10ModsDir, it) }
 
-def missingLocalMods = requiredLocalMods.findAll { !new File(atm10ModsDir, it).isFile() }
-if (!missingLocalMods.isEmpty()) {
-    throw new GradleException("ATM10 compile dependencies are missing from ${atm10ModsDir}: ${missingLocalMods.join(', ')}")
-}
-if (!ldlibCompatJar.isFile()) {
-    throw new GradleException("LDLib 1.x compatibility jar is missing: ${ldlibCompatJar}")
+def checkLocalDependencies = tasks.register('checkLocalDependencies') {
+    inputs.files(requiredLocalModFiles + ldlibCompatJar)
+    doLast { task ->
+        def missing = task.inputs.files.files.findAll { !it.isFile() }
+        if (!missing.isEmpty()) {
+            throw new GradleException('Local compile dependencies are missing: ' + missing.join(', '))
+        }
+    }
 }
 
 dependencies {
@@ -99,9 +108,7 @@ dependencies {
     annotationProcessor('org.projectlombok:lombok:1.18.38')
     annotationProcessor('org.spongepowered:mixin:0.8.7:processor')
 
-    requiredLocalMods.each { jarName ->
-        compileOnly(files(new File(atm10ModsDir, jarName)))
-    }
+    compileOnly(files(requiredLocalModFiles))
     compileOnly(files(ldlibCompatJar))
     runtimeOnly(files(ldlibCompatJar))
 
@@ -132,6 +139,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_author       : mod_author,
             loader_version   : loader_version,
             neoforge_version : neoforge_version,
+            neoforge_version_range: neoforge_version_range,
             minecraft_version: minecraft_version,
             gtceu_version    : gtceu_version
     ]
@@ -165,9 +173,15 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.withType(JavaCompile).configureEach {
+    dependsOn checkLocalDependencies
     options.encoding = 'UTF-8'
     options.release.set(21)
     options.compilerArgs.addAll(['-Aquiet=true', '-Xmaxerrs', '1000'])
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }
 
 tasks.named('sourcesJar', Jar).configure {

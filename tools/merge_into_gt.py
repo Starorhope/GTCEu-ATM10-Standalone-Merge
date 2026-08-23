@@ -89,7 +89,7 @@ CONSOLIDATED_DEPENDENCIES = [
     {
         "modId": "neoforge",
         "type": "required",
-        "versionRange": "[21.1.248]",
+        "versionRange": "[21.1.240,)",
         "ordering": "NONE",
         "side": "BOTH",
     },
@@ -159,6 +159,14 @@ class Entry:
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest().upper()
+
+
+def report_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        return f"<external>/{resolved.name}"
 
 
 def is_signature(name: str) -> bool:
@@ -837,20 +845,20 @@ def main() -> None:
 
     report = {
         "resolved_inputs": {
-            label: str(path) for label, path in resolved_inputs.items()
+            label: report_path(path) for label, path in resolved_inputs.items()
         },
-        "base": str(args.base.resolve()),
+        "base": report_path(args.base),
         "base_sha256": sha256(args.base.read_bytes()),
-        "gtna": str(args.gtna.resolve()),
+        "gtna": report_path(args.gtna),
         "gtna_sha256": sha256(args.gtna.read_bytes()),
-        "pccard": str(args.pccard.resolve()),
+        "pccard": report_path(args.pccard),
         "pccard_sha256": sha256(args.pccard.read_bytes()),
-        "bridge": str(args.bridge.resolve()),
+        "bridge": report_path(args.bridge),
         "bridge_sha256": sha256(args.bridge.read_bytes()),
         "bridge_entries": bridge_entry_hashes,
-        "nested_ldlib": str(args.ldlib.resolve()),
+        "nested_ldlib": report_path(args.ldlib),
         "nested_ldlib_sha256": nested_ldlib_sha256,
-        "output": str(args.output.resolve()),
+        "output": report_path(args.output),
         "output_sha256": sha256(args.output.read_bytes()),
         "logical_mods": ["gtceu", "ldlib"],
         "embedded_feature_modules": ["gtna", "pccard"],

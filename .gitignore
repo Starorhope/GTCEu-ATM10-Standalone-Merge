@@ -3,14 +3,24 @@ build/
 .gradle/
 .gradle-user-home/
 run/
+runs/
 run-data/
 local-libs/
 work-extracted-gtceu-libs/
 site/
+bin/
+out/
+classes/
+*.class
+__pycache__/
+*.py[cod]
 
 # IDE and OS files
 .idea/
 .vscode/
+.classpath
+.project
+.settings/
 *.iml
 *.ipr
 *.iws
@@ -32,3 +42,6 @@ backups/
 *.p12
 credentials*
 tokens*
+
+# Local-only release candidates pending source and asset-rights clearance
+/release/*-v7.jar

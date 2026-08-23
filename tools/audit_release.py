@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 EXPECTED_GTCEU_DEPENDENCIES = {
-    "neoforge": ("required", "[21.1.248]", "BOTH"),
+    "neoforge": ("required", "[21.1.240,)", "BOTH"),
     "minecraft": ("required", "[1.21.1]", "BOTH"),
     "ae2": ("required", "[19.2.17]", "BOTH"),
     "guideme": ("required", "[21.1.17]", "BOTH"),
@@ -26,6 +26,14 @@ EXPECTED_GTCEU_DEPENDENCIES = {
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest().upper()
+
+
+def report_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        return f"<external>/{resolved.name}"
 
 
 def signature(name: str) -> bool:
@@ -94,7 +102,7 @@ def inspect_jar(path: Path) -> tuple[dict, dict]:
 
         dependencies = metadata.get("dependencies", {})
         result = {
-            "path": str(path.resolve()),
+            "path": report_path(path),
             "length": len(raw),
             "sha256": sha256(raw),
             "entry_count": len(names),

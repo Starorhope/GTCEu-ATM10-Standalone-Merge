@@ -1,0 +1,270 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+version = mod_version
+group = mod_group_id
+base {
+    archivesName = 'gtceu-embedded-addons-bridge'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+}
+
+neoForge {
+    version = project.neo_version
+    parchment {
+        minecraftVersion = project.minecraft_version
+        mappingsVersion = '2024.11.17'
+    }
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+    runs {
+        configureEach {
+            sourceSet = sourceSets.main
+        }
+        client {
+            client()
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        }
+        server {
+            server()
+            programArguments.addAll('--nogui')
+        }
+        gameTestServer {
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        }
+        data {
+            data()
+            programArguments.addAll(
+                    '--mod', project.mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources/').absolutePath,
+                    '--existing', file('src/main/resources/').absolutePath)
+        }
+    }
+}
+
+def localFile = { String propertyName ->
+    file(findProperty(propertyName) ?: project.property(propertyName))
+}
+
+def gtceuBaseJar = localFile('gtceu_base_jar')
+def gtnaJar = localFile('gtna_jar')
+def pccardJar = localFile('pccard_jar')
+def ldlibJar = localFile('ldlib_jar')
+def pythonCommand = providers.environmentVariable('PYTHON').orElse('python').get()
+
+dependencies {
+    // The bridge references APIs supplied by these local artifacts. The full
+    // GTCEu source is intentionally not vendored in this repository.
+    compileOnly files(gtceuBaseJar, ldlibJar)
+    compileOnly 'org.jetbrains:annotations:26.0.1'
+    annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+    // Match the debug information level used by the previously verified bridge.
+    options.debugOptions.debugLevel = 'source,lines'
+    options.compilerArgs.addAll(['-Aquiet=true', '-Xmaxerrs', '1000'])
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+def metadataProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description
+]
+
+def generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    inputs.properties(metadataProperties)
+    from 'src/main/templates'
+    into layout.buildDirectory.dir('generated/sources/modMetadata')
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand(metadataProperties)
+    }
+}
+sourceSets.main.resources.srcDir(generateModMetadata)
+neoForge.ideSyncTask(generateModMetadata)
+
+tasks.withType(ProcessResources).configureEach {
+    inputs.properties(metadataProperties)
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand(metadataProperties)
+    }
+}
+
+// The merge script accepts only the bridge class and its Mixin config. The
+// generated MDK metadata remains available in build/resources for IDEs but is
+// deliberately excluded from this intermediate bridge artifact.
+tasks.named('jar', Jar).configure {
+    archiveBaseName = 'gtceu-embedded-addons-bridge'
+    manifest.attributes(['MixinConfigs': 'gtceu-embedded-addons.mixins.json'])
+    exclude('META-INF/neoforge.mods.toml')
+}
+
+tasks.register('checkMergeInputs') {
+    doLast {
+        def required = [
+                'gtceu base JAR': gtceuBaseJar,
+                'LDLib 1.x JAR': ldlibJar
+        ]
+        def missing = required.findAll { label, path -> !path.isFile() }
+                .collect { label, path -> "${label}: ${path}" }
+        if (!missing.isEmpty()) {
+            throw new GradleException('Missing merge inputs:\n - ' + missing.join('\n - ') +
+                    '\nOverride the corresponding -P..._jar properties; local dependency JARs are not committed.')
+        }
+    }
+}
+
+def nestedGradleArgs = ['--no-daemon', '--stacktrace', "-Pldlib_compat_jar=${ldlibJar.absolutePath}"]
+def configuredAtm10ModsDir = providers.gradleProperty('atm10_mods_dir')
+        .orElse(providers.environmentVariable('ATM10_MODS_DIR')).orNull
+if (configuredAtm10ModsDir) {
+    nestedGradleArgs += "-Patm10_mods_dir=${configuredAtm10ModsDir}"
+}
+
+def prepareEmbeddedCompileLibraries = tasks.register('prepareEmbeddedCompileLibraries', Copy) {
+    dependsOn 'checkMergeInputs'
+    from(zipTree(gtceuBaseJar)) {
+        include 'META-INF/jarjar/*.jar'
+        eachFile { details -> details.path = details.name }
+        includeEmptyDirs = false
+    }
+    into layout.projectDirectory.dir('source/gtna/local-libs')
+}
+
+def buildGtna = tasks.register('buildGtna', Exec) {
+    dependsOn prepareEmbeddedCompileLibraries
+    inputs.files(fileTree('source/gtna') {
+        exclude '.gradle/**', 'build/**', 'local-libs/**'
+    })
+    outputs.file(gtnaJar)
+    workingDir layout.projectDirectory
+    def windows = System.getProperty('os.name').toLowerCase().contains('windows')
+    commandLine windows ? ['cmd', '/c', 'gradlew.bat', '-p', 'source/gtna', 'build'] :
+            ['./gradlew', '-p', 'source/gtna', 'build']
+    args nestedGradleArgs
+}
+
+def buildPccard = tasks.register('buildPccard', Exec) {
+    dependsOn prepareEmbeddedCompileLibraries
+    inputs.files(fileTree('source/pccard') {
+        exclude '.gradle/**', 'build/**'
+    })
+    outputs.file(pccardJar)
+    workingDir layout.projectDirectory
+    def windows = System.getProperty('os.name').toLowerCase().contains('windows')
+    commandLine windows ? ['cmd', '/c', 'gradlew.bat', '-p', 'source/pccard', 'build'] :
+            ['./gradlew', '-p', 'source/pccard', 'build']
+    args nestedGradleArgs
+}
+
+dependencies {
+    compileOnly files(gtnaJar, pccardJar).builtBy(buildGtna, buildPccard)
+}
+
+def mergedReleaseFile = layout.buildDirectory.file(
+        "libs/${mod_id}-${minecraft_version}-${mod_version}-standalone.jar")
+def mergeReportFile = layout.buildDirectory.file('reports/merge-report.json')
+def releaseAuditFile = layout.buildDirectory.file('reports/release-audit.json')
+def bridgeJarFile = tasks.named('jar', Jar).flatMap { it.archiveFile }
+
+def mergeRelease = tasks.register('mergeRelease', Exec) {
+    dependsOn 'checkMergeInputs', buildGtna, buildPccard, 'jar'
+    inputs.files(gtceuBaseJar, gtnaJar, pccardJar, ldlibJar, bridgeJarFile)
+    outputs.files(mergedReleaseFile, mergeReportFile)
+    commandLine pythonCommand, 'tools/merge_into_gt.py',
+            '--base', gtceuBaseJar,
+            '--gtna', gtnaJar,
+            '--pccard', pccardJar,
+            '--bridge', bridgeJarFile.get().asFile,
+            '--ldlib', ldlibJar,
+            '--output', mergedReleaseFile.get().asFile,
+            '--manifest', mergeReportFile.get().asFile
+}
+
+def auditMergedRelease = tasks.register('auditMergedRelease', Exec) {
+    dependsOn mergeRelease
+    inputs.files(gtnaJar, pccardJar, mergedReleaseFile)
+    outputs.file(releaseAuditFile)
+    commandLine pythonCommand, 'tools/audit_release.py',
+            '--gtna', gtnaJar,
+            '--pccard', pccardJar,
+            '--merged', mergedReleaseFile.get().asFile,
+            '--output', releaseAuditFile.get().asFile
+}
+
+tasks.register('buildMergedRelease') {
+    group = 'build'
+    description = 'Builds both add-ons, merges them into GTCEu, and audits the result.'
+    dependsOn auditMergedRelease
+}
+
+def templatePaths = [
+        'settings.gradle', 'build.gradle', 'gradle.properties', 'gradlew', 'gradlew.bat',
+        'gradle/wrapper/gradle-wrapper.jar', 'gradle/wrapper/gradle-wrapper.properties',
+        'src/main/java', 'src/main/resources/gtceu-embedded-addons.mixins.json',
+        'src/main/templates/META-INF/neoforge.mods.toml'
+]
+tasks.register('templateCheck') {
+    inputs.files(templatePaths.collect { layout.projectDirectory.file(it) })
+    doLast { task ->
+        def missing = task.inputs.files.files.findAll { !it.exists() }
+        if (!missing.isEmpty()) {
+            throw new GradleException('NeoForge template paths are missing: ' + missing.join(', '))
+        }
+        task.logger.lifecycle('NeoForge ModDevGradle template structure: OK')
+    }
+}
+
+tasks.named('check').configure {
+    dependsOn 'templateCheck'
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

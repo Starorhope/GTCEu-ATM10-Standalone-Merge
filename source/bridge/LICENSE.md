@@ -5,12 +5,14 @@ SPDX-License-Identifier: LGPL-3.0-or-later
 Copyright (c) 2026 contributors to the GTCEu ATM10 Standalone Merge.
 
 The bridge source and resources authored for this repository, including
-`GTCEuMergedAddonsMixin.java` and `gtceu-embedded-addons.mixins.json`, are
+`src/main/java/dev/codex/atm10merge/mixin/GTCEuMergedAddonsMixin.java` and
+`src/main/resources/gtceu-embedded-addons.mixins.json`, are
 licensed under the GNU Lesser General Public License, version 3.0 or any
 later version published by the Free Software Foundation (LGPL-3.0-or-later).
 
-The generated `gtceu-embedded-addons-bridge.jar` is the corresponding build
-artifact. This notice covers only the bridge contributions. It does not
+The generated `build/libs/gtceu-embedded-addons-bridge-*.jar` is the
+corresponding intermediate build artifact. This notice covers only the bridge
+contributions. It does not
 relicense or alter the copyright or license of GTCEu, GTNA, Programmed Circuit
 Card, NeoForge, Mixin, or any other code or resource used by the bridge.
 
