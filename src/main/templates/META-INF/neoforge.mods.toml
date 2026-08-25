@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
-issueTrackerURL="https://github.com/Starorhope/GTCEu-ATM10-Standalone-Merge/issues"
+issueTrackerURL="https://github.com/Valerm625/GTCEu-ATM10-Standalone-Merge/issues"
 
 [[mods]]
 modId="${mod_id}"
